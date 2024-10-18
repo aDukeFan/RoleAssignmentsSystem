@@ -1,0 +1,5 @@
+rootProject.name = 'RoleAssignmentsSystem'
+include 'usermanager'
+include 'rolemanager'
+include 'coordinator'
+

@@ -1,0 +1,101 @@
+version: '3.8'
+services:
+
+  usermanager:
+    build: usermanager
+    image: usermanager-image
+    container_name: usermanager-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://usermanager-db:5432/usermanager_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - usermanager-db
+      - kafka
+    ports:
+      - "8080:8080"
+
+  usermanager-db:
+    image: postgres:16.1
+    container_name: usermanager-db-container
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=usermanager_db
+
+  rolemanager:
+    build: rolemanager
+    image: rolemanager-image
+    container_name: rolemanager-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://rolemanager-db:5432/rolemanager_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - rolemanager-db
+      - kafka
+    ports:
+      - "9090:9090"
+
+  rolemanager-db:
+    image: postgres:16.1
+    container_name: rolemanager-db-container
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=rolemanager_db
+
+  coordinator:
+    build: coordinator
+    image: coordinator-image
+    container_name: coordinator-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://coordinator-db:5432/coordinator_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - coordinator-db
+      - kafka
+    ports:
+      - "7070:7070"
+
+  coordinator-db:
+    image: postgres:16.1
+    container_name: coordinator-db-container
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=coordinator_db
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper-container
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka-container
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE='true'
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
