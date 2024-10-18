@@ -136,7 +136,7 @@
 ## Тестирование
 
 - **Unit-тесты**: покрывают сервисный слой для проверки бизнес-логики.
-- **Интеграционные тесты**: проверяют работу REST API для пользователей и ролей.
+- **Интеграционные тесты**: проверяют работу REST API.
 - **Postman Collection**: 
 [Successful_Post_Tests](./Postman/RoleAssignmentsSystem_Successful_Post_Tests.postman_collection.json)  
     - Эта коллекция состоит из успешных POST-запросов к каждому сервису, 
